@@ -9,7 +9,7 @@ import { baseUrl } from '../shared/baseUrl';
 import { connect } from 'react-redux';
 
 import { postFavorite, postComment } from '../redux/ActionCreators';
-
+import * as Animatable from 'react-native-animatable';
 
 const mapDispatchToProps = (dispatch) => ({
     postFavorite: (dishId) => dispatch(postFavorite(dishId)),
@@ -226,18 +226,18 @@ class Dishdetail extends Component {
 
         return (
             <ScrollView>
-
-                <RenderDish
-                    dish={dish}
-                    favorite={favorite}
-                    onPressFavorite={() => this.markFavorite(dishId)}
-                    onPressComment={() =>
-                        this.setState({ showModal: true })
-                    }
-                />
-
-                <RenderComments comments={comments} />
-
+                <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+                    <RenderDish
+                        dish={dish}
+                        favorite={favorite}
+                        onPressFavorite={() => this.markFavorite(dishId)}
+                        onPressComment={() =>
+                            this.setState({ showModal: true })
+                        } />
+                </Animatable.View>
+                <Animatable.View animation='fadeInUp' duration={2000} delay={1000}>
+                    <RenderComments comments={comments} />
+                </Animatable.View>
                 <Modal
                     animationType={'slide'}
                     visible={this.state.showModal}

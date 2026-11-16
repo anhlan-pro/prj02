@@ -6,6 +6,8 @@ import { baseUrl } from '../shared/baseUrl';
 
 import { connect } from 'react-redux';
 import Loading from './LoadingComponent';
+import * as Animatable from 'react-native-animatable';
+
 const mapStateToProps = (state) => {
     return {
         dishes: state.dishes
@@ -30,15 +32,17 @@ class Menu extends Component {
     renderMenuItem(item, index) {
         const { navigate } = this.props.navigation;
         return (
-            <ListItem key={index} onPress={() => navigate('Dishdetail', { dishId: item.id })}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Avatar source={{ uri: baseUrl + item.image }} />
-                    <ListItem.Content style={{ marginLeft: 10 }}>
-                        <ListItem.Title>{item.name}</ListItem.Title>
-                        <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
-                    </ListItem.Content>
-                </View>
-            </ListItem>
+            <Animatable.View animation='fadeInRightBig' duration={2000}>
+                <ListItem key={index} onPress={() => navigate('Dishdetail', { dishId: item.id })}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Avatar source={{ uri: baseUrl + item.image }} />
+                        <ListItem.Content style={{ marginLeft: 10 }}>
+                            <ListItem.Title>{item.name}</ListItem.Title>
+                            <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
+                        </ListItem.Content>
+                    </View>
+                </ListItem>
+            </Animatable.View>
         );
     }
 
