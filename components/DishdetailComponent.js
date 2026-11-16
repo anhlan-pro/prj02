@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Text, ImageBackground, FlatList, Modal, Button } from 'react-native';
+import { View, Text, ImageBackground, FlatList, Modal, Button, PanResponder, Alert } from 'react-native';
 
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 
@@ -56,44 +56,55 @@ class RenderComments extends Component {
 }
 
 class RenderDish extends Component {
-
     render() {
+        // gesture
+        const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
+            if (dx < -200) return 1; // right to left
+            return 0;
+        };
+        const panResponder = PanResponder.create({
+            onStartShouldSetPanResponder: (e, gestureState) => { return true; },
+            onPanResponderEnd: (e, gestureState) => {
+                if (recognizeDrag(gestureState) === 1) {
+                    Alert.alert(
+                        'Add Favorite',
+                        'Are you sure you wish to add ' + dish.name + ' to favorite?',
+                        [
+                            { text: 'Cancel', onPress: () => { /* nothing */ } },
+                            { text: 'OK', onPress: () => { this.props.favorite ? alert('Already favorite') : this.props.onPressFavorite() } },
+                        ]
+                    );
+                }
+                return true;
+            }
+        });
         const dish = this.props.dish;
 
         if (dish != null) {
             return (
-                <Card>
+                <Card {...panResponder.panHandlers}>
                     <ImageBackground
                         source={{ uri: baseUrl + dish.image }}
                         style={{
                             width: '100%', height: 100, alignItems: 'center', justifyContent: 'center'
-                        }}
-                    >
+                        }}>
                         <Card.FeaturedTitle>
                             {dish.name}
                         </Card.FeaturedTitle>
                     </ImageBackground><Text style={{ margin: 10 }}>{dish.description}
                     </Text>
                     <View
-                        style={{
-                            flexDirection: 'row', justifyContent: 'center'
-                        }}
-                    >
-
+                        style={{ flexDirection: 'row', justifyContent: 'center' }}>
                         <Icon raised reverse name={this.props.favorite ? 'heart' : 'heart-o'} type='font-awesome' color='#f50'
                             onPress={() => this.props.favorite ? alert('Already favorite') : this.props.onPressFavorite()}
                         />
-
                         <Icon raised reverse name='pencil' type='font-awesome' color='#f50'
                             onPress={() => this.props.onPressComment()}
                         />
-
                     </View>
-
                 </Card>
             );
         }
-
         return <View />;
     }
 }
@@ -113,11 +124,7 @@ class ModalContent extends Component {
     render() {
         return (
             <View
-                style={{
-                    justifyContent: 'center',
-                    margin: 20
-                }}
-            >
+                style={{ justifyContent: 'center', margin: 20 }}>
 
                 <Rating
                     startingValue={this.state.rating}
